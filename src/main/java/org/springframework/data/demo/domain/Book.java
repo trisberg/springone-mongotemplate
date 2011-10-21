@@ -2,6 +2,7 @@ package org.springframework.data.demo.domain;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Set;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -21,6 +22,8 @@ public class Book {
 	private BigDecimal price;
 	
 	private Date published;
+	
+	private Set<String> categories;
 
 	public String getTitle() {
 		return title;
@@ -60,6 +63,14 @@ public class Book {
 
 	public void setPublished(Date published) {
 		this.published = published;
+	}
+
+	public Set<String> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(Set<String> categories) {
+		this.categories = categories;
 	}
 
 	@Override

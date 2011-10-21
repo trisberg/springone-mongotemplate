@@ -74,6 +74,8 @@
 			<br/>
 			
 			<a href="new">Add a book</a>
+			&nbsp;&nbsp;&nbsp;&nbsp;
+			<a href="search">Search for books</a>
 			
 			<br/>
 			<br/>

@@ -1,6 +1,7 @@
 package org.springframework.data.demo.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.demo.domain.Book;
 
@@ -14,6 +15,8 @@ public interface BookShelf {
 	
 	void remove(String isbn);
 	
-	List<Book> findAll(); 
+	List<Book> findAll();
+	
+	List<Book> findByCategories(Set<String> categories, String year);
 
 }

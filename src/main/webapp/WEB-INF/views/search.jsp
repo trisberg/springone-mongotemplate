@@ -37,81 +37,38 @@
 
 			<!-- START PAGE CONTENT-->
 			<h1>
-				Add a Book  
+				Search for Books  
 			</h1>
 
-<div id="bookForm">
-	<div class="span-12">
-		<spring:hasBindErrors name="book">
+<div id="searchForm">
+	<div class="span-18">
+		<spring:hasBindErrors name="search">
 			<div class="error">
-				<spring:bind path="book.*">
+				<spring:bind path="search.*">
 					<c:forEach items="${status.errorMessages}" var="error">
 						<c:out value="${error}"/><br/>
 					</c:forEach>
 				</spring:bind>
 			</div>
 		</spring:hasBindErrors>
-		<form:form modelAttribute="book">
+		<form:form modelAttribute="search">
 			<fieldset>
-				<legend>New Book</legend>
-		        <div>
-					<div class="span-3">
-						<label for="title">Title:</label>
-					</div>
-					<div class="span-7 last">
-						<p><form:input path="title"/></p>
-					</div>
-				</div>
+				<legend>Search Criteria</legend>
 				<div>
 					<div class="span-3">
-						<label for="author.name">Author:</label>
+						<label for="categories">Categories to include:</label>
 					</div>
-					<div class="span-7 last">
-						<p><form:input path="author.name"/></p>
-					</div>
-				</div>
-				<div>
-					<div class="span-3">
-						<label for="isbn">ISBN:</label>
-					</div>
-					<div class="span-7 last">
-						<p><form:input path="isbn"/></p>
-					</div>
-				</div>
-				<div>
-					<div class="span-3">
-						<label for="price">Price:</label>
-					</div>
-					<div class="span-7 last">
-						<p><form:input path="price"/></p>
-					</div>
-				</div>
-				<div>
-					<div class="span-3">
-						<label for="published">Published:</label>
-					</div>
-					<div class="span-7 last">
-						<p><form:input path="published"/></p>
-						<script type="text/javascript">
-							Spring.addDecoration(new Spring.ElementDecoration({
-								elementId : "published",
-								widgetType : "dijit.form.DateTextBox",
-								widgetAttrs : { datePattern : "MM-dd-yyyy", required : true }}));  
-						</script>
-					</div> 
-				</div>
-				<div>
-					<div class="span-3">
-						<label for="categories">Categories:</label>
-					</div>
-					<div class="span-7 last">
+					<div class="span-4 last">
 						<p><form:select path="categories" multiple="true" items="${categories}"/></p>
 					</div>
-				</div>
-				<div>
+					<div class="span-3">
+						<label for="startYear">Earliest year published:</label>
+					</div>
+					<div class="span-4 last">
+						<p><form:select path="startYear" multiple="false" items="${years}"/></p>
+					</div>
 					<p>
-					<button type="submit" id="proceed" name="_proceed">Add</button>
-					<button type="submit" name="_cancel" >Cancel</button>
+					<button type="submit" id="proceed" name="_proceed">Search</button>
 					</p>
 				</div>
 			</fieldset>
@@ -120,6 +77,38 @@
 </div>
 			<br/>
 			<br/>
+			<table class="summary">
+				<thead>
+					<tr>
+						<th>Title</th>
+						<th>Author</th>
+						<th>ISBN</th>
+						<th>Price</th>
+						<th>Published</th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach var="book" items="${bookList}">
+						<tr>
+							<td>${book.title}</td>
+							<td>${book.author.name}</td>
+							<td>${book.isbn}</td>
+							<td>${book.price}</td>
+							<td><fmt:formatDate value="${book.published}" type="both" pattern="MM/dd/yyyy" /></td>
+							<td><a href="edit/${book.isbn}">Edit Book</a></td>
+						</tr>
+					</c:forEach>
+					<c:if test="${empty bookList}">
+						<tr>
+							<td colspan="6">No books found</td>
+						</tr>
+					</c:if>
+				</tbody>
+			</table>
+			<br/>
+			<br/>
+			<a href="<c:url value="/" />">Home</a>
 			<br/>
 			<br/>
 			<br/>

@@ -101,6 +101,14 @@
 					</div>
 				</div>
 				<div>
+					<div class="span-3">
+						<label for="categories">Categories:</label>
+					</div>
+					<div class="span-7 last">
+						<p><form:select path="categories" multiple="true" items="${categories}"/></p>
+					</div>
+				</div>
+				<div>
 					<p>
 					<button type="submit" id="proceed" name="_proceed">Save</button>
 					<button type="submit" name="_delete" >Delete</button>

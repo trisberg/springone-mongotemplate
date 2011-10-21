@@ -1,7 +1,10 @@
 package org.springframework.data.demo.web;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.demo.domain.Author;
 import org.springframework.data.demo.domain.Book;
+import org.springframework.data.demo.domain.SearchCriteria;
 import org.springframework.data.demo.repository.BookShelf;
 import org.springframework.data.demo.repository.DbHelper;
 import org.springframework.stereotype.Controller;
@@ -30,6 +34,13 @@ import org.springframework.web.bind.support.SessionStatus;
 @Controller
 public class HomeController {
 	
+	private final List<String> categories = 
+			Arrays.asList("Java", "Spring", "Mongo DB", "Cloud Foundry", "Scala", "Ruby", "Grails");
+	
+	private final List<String> years = 
+			Arrays.asList("", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011");
+	
+	
 	@Autowired
 	BookShelf bookShelf;
 	
@@ -48,7 +59,7 @@ public class HomeController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Model model) {
 		
-		model.addAttribute("version", "The MongoTemplate Version for Mongo Boston 2011");
+		model.addAttribute("version", "The MongoTemplate Version for SpringOne 2GX 2011");
 		
 		model.addAttribute("bookList", bookShelf.findAll() );
 		
@@ -56,20 +67,22 @@ public class HomeController {
 	}
 	
 	/**
-	 * Add new book.
+	 * Add new book form.
 	 */
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String newBook(Model model) {
 		
 		Book book = new Book();
 		book.setAuthor(new Author());
-		model.addAttribute("book", book );
+		model.addAttribute("book", book);
+		
+		model.addAttribute("categories", categories);
 		
 		return "addBook";
 	}
 
 	/**
-	 * Add new book.
+	 * Save the new book.
 	 */
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	public String addBook(@ModelAttribute("book") Book newBook, BindingResult result, SessionStatus status, HttpServletRequest request) {
@@ -100,12 +113,14 @@ public class HomeController {
 		
 		Book book = bookShelf.find(isbn);
 		model.addAttribute("book", book );
-		
+
+		model.addAttribute("categories", categories);
+
 		return "editBook";
 	}
 
 	/**
-	 * Save and edited book.
+	 * Save an edited book.
 	 */
 	@RequestMapping(value = "/edit/{isbn}", method = RequestMethod.POST)
 	public String modifyBook(@PathVariable("isbn") String isbn, @ModelAttribute("book") Book book, BindingResult result, SessionStatus status, HttpServletRequest request) {
@@ -127,6 +142,52 @@ public class HomeController {
 		
 		return "redirect:/";
 	}
+
+	/**
+	 * Define search criteria.
+	 */
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	public String searchCriteria(Model model) {
+
+		SearchCriteria searchCriteria = new SearchCriteria();
+		model.addAttribute("search", searchCriteria);
+
+		model.addAttribute("years", years);		
+		model.addAttribute("categories", categories);
+
+		List<Book> bookList = new ArrayList<Book>();
+		model.addAttribute("bookList", bookList);
+
+		return "search";
+	}
+
+	/**
+	 * Search for books.
+	 */
+	@RequestMapping(value = "/search", method = RequestMethod.POST)
+	public String serachForBooks(@ModelAttribute("search") SearchCriteria searchCriteria, @ModelAttribute("bookList") ArrayList<Book> bookList, Model model, BindingResult result, SessionStatus status, HttpServletRequest request) {
+		
+		if (request.getParameter("_cancel") != null) {
+			return "redirect:/";
+		}
+		if (result.hasErrors()) {
+			return	"search";
+		}
+		
+		if (searchCriteria != null) {
+			status.setComplete();
+			bookList.clear();
+			bookList.addAll(bookShelf.findByCategories(searchCriteria.getCategories(), searchCriteria.getStartYear()));
+		}
+
+		model.addAttribute("years", years);		
+		model.addAttribute("categories", categories);
+
+		model.addAttribute("bookList", bookList);
+		
+		return "search";
+	}
+
 
 	/**
 	 * Utility methods
