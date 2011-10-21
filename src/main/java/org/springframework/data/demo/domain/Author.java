@@ -6,7 +6,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Author {
 	
-	@Id
+	@Id @SuppressWarnings("unused")
+	private String id;
+	
 	private String name;
 
 	public String getName() {
