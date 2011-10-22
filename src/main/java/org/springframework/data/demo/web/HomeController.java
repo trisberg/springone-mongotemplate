@@ -198,6 +198,13 @@ public class HomeController {
 		return "dump";
 	}
 
+	@RequestMapping(value={"/populate"}, method=RequestMethod.GET)
+	public String populate(Model model) {
+		dbHelper.clear();
+		dbHelper.populate();
+		return "redirect:/";
+	}
+
 	@RequestMapping(value={"/clear"}, method=RequestMethod.GET)
 	public String clear(Model model) {
 		dbHelper.clear();
