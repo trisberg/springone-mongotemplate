@@ -17,6 +17,6 @@ public interface BookShelf {
 	
 	List<Book> findAll();
 	
-	List<Book> findByCategories(Set<String> categories, String year);
+	List<Book> findByCategoriesOrYear(Set<String> categories, String year);
 
 }

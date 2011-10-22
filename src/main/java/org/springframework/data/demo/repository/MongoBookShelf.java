@@ -53,13 +53,13 @@ public class MongoBookShelf implements BookShelf {
 	}
 
 	@Override
-	public List<Book> findByCategories(Set<String> categories, String year) {
-		Criteria[] criteriaForMatch = new Criteria[categories == null ? 0 : categories.size()];
-		if (categories != null) {
-			int i = 0;
-			for (String c : categories) {
-				criteriaForMatch[i++] = Criteria.where("categories").is(c);
-			}
+	public List<Book> findByCategoriesOrYear(Set<String> categories, String year) {
+		String[] categoriesToMatch;
+		if (categories == null) {
+			categoriesToMatch = new String[] {};
+		}
+		else {
+			categoriesToMatch = categories.toArray(new String[categories.size()]);
 		}
 		Date startDate = null;
 		if (year != null && year.length() == 4) {
@@ -68,17 +68,15 @@ public class MongoBookShelf implements BookShelf {
 				startDate = formatter.parse(year + "-01-01");
 			} catch (ParseException e) {}
 		}
-
 		Criteria searchCriteria = null;
-		
 		if (startDate != null) {
 			searchCriteria = Criteria.where("published").gte(startDate);
 		}
 		else {
 			searchCriteria = new Criteria();
 		}
-		if (criteriaForMatch.length > 0) {		
-			searchCriteria.orOperator(criteriaForMatch);
+		if (categoriesToMatch.length > 0) {		
+			searchCriteria.and("categories").in((Object[])categoriesToMatch);
 		}
 		Query query = new Query(searchCriteria);
 		return mongoTemplate.find(query, Book.class);

@@ -165,7 +165,7 @@ public class HomeController {
 	 * Search for books.
 	 */
 	@RequestMapping(value = "/search", method = RequestMethod.POST)
-	public String serachForBooks(@ModelAttribute("search") SearchCriteria searchCriteria, @ModelAttribute("bookList") ArrayList<Book> bookList, Model model, BindingResult result, SessionStatus status, HttpServletRequest request) {
+	public String searchForBooks(@ModelAttribute("search") SearchCriteria searchCriteria, @ModelAttribute("bookList") ArrayList<Book> bookList, Model model, BindingResult result, SessionStatus status, HttpServletRequest request) {
 		
 		if (request.getParameter("_cancel") != null) {
 			return "redirect:/";
@@ -177,7 +177,7 @@ public class HomeController {
 		if (searchCriteria != null) {
 			status.setComplete();
 			bookList.clear();
-			bookList.addAll(bookShelf.findByCategories(searchCriteria.getCategories(), searchCriteria.getStartYear()));
+			bookList.addAll(bookShelf.findByCategoriesOrYear(searchCriteria.getCategories(), searchCriteria.getStartYear()));
 		}
 
 		model.addAttribute("years", years);		
@@ -187,7 +187,6 @@ public class HomeController {
 		
 		return "search";
 	}
-
 
 	/**
 	 * Utility methods
